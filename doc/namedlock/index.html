@@ -43,7 +43,7 @@
     <section id='main' class="content mod">
 <h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>namedlock</a><wbr></span><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-0' href='../src/namedlock/lib.rs.html#18-262'>[src]</a></span></h1>
+        </span><a id='src-0' href='../src/namedlock/lib.rs.html#18-435'>[src]</a></span></h1>
 <div class='docblock'><p>Namespaces for named locks.</p>
 
 <p>This is useful when synchronizing access to a named resource, but you only
@@ -59,7 +59,7 @@ know the name of the resource at runtime.</p>
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>::{<span class='ident'>Read</span>,<span class='ident'>Seek</span>,<span class='ident'>Write</span>,<span class='ident'>SeekFrom</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>FromStr</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>;
-<span class='kw'>use</span> <span class='ident'>namedlock</span>::<span class='ident'>LockSpace</span>;
+<span class='kw'>use</span> <span class='ident'>namedlock</span>::{<span class='ident'>LockSpace</span>,<span class='ident'>AutoCleanup</span>};
 
 <span class='comment'>// Short-hand function for space.with_lock that opens the file if necessary</span>
 <span class='kw'>fn</span> <span class='ident'>with_file</span><span class='op'>&lt;</span><span class='ident'>R</span>,<span class='ident'>F</span><span class='op'>&gt;</span>(<span class='ident'>space</span>:<span class='ident'>LockSpace</span><span class='op'>&lt;</span><span class='ident'>OsString</span>,<span class='ident'>File</span><span class='op'>&gt;</span>,<span class='ident'>filename</span>:<span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>PathBuf</span><span class='op'>&gt;</span>,<span class='ident'>f</span>: <span class='ident'>F</span>) <span class='op'>-&gt;</span> <span class='ident'>R</span>
@@ -67,7 +67,7 @@ know the name of the resource at runtime.</p>
 {
     <span class='ident'>space</span>.<span class='ident'>with_lock</span>(<span class='ident'>filename</span>.<span class='ident'>as_os_str</span>(),
         <span class='op'>||</span><span class='ident'>OpenOptions</span>::<span class='ident'>new</span>().<span class='ident'>read</span>(<span class='boolval'>true</span>).<span class='ident'>write</span>(<span class='boolval'>true</span>).<span class='ident'>open</span>(<span class='kw-2'>&amp;</span><span class='op'>*</span><span class='ident'>filename</span>).<span class='ident'>unwrap</span>(),<span class='ident'>f</span>
-    )
+    ).<span class='ident'>unwrap</span>()
 }
 
 <span class='comment'>// Initialize the file</span>
@@ -76,7 +76,7 @@ know the name of the resource at runtime.</p>
 <span class='kw'>let</span> <span class='ident'>filename</span><span class='op'>=</span><span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>filename</span>);
 <span class='ident'>File</span>::<span class='ident'>create</span>(<span class='kw-2'>&amp;</span><span class='op'>*</span><span class='ident'>filename</span>).<span class='ident'>unwrap</span>().<span class='ident'>write_all</span>(<span class='string'>b&quot;0&quot;</span>).<span class='ident'>unwrap</span>();
 
-<span class='kw'>let</span> <span class='ident'>space</span><span class='op'>=</span><span class='ident'>LockSpace</span>::<span class='op'>&lt;</span><span class='ident'>OsString</span>,<span class='ident'>File</span><span class='op'>&gt;</span>::<span class='ident'>new</span>(<span class='boolval'>true</span>);
+<span class='kw'>let</span> <span class='ident'>space</span><span class='op'>=</span><span class='ident'>LockSpace</span>::<span class='op'>&lt;</span><span class='ident'>OsString</span>,<span class='ident'>File</span><span class='op'>&gt;</span>::<span class='ident'>new</span>(<span class='ident'>AutoCleanup</span>);
 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>threads</span><span class='op'>=</span><span class='macro'>vec</span><span class='macro'>!</span>[];
 
 <span class='comment'>// Have 1000 threads increment the value in the file, one at a time</span>
@@ -126,7 +126,32 @@ GNU General Public License for more details.</p>
 <p>You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</p>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use Cleanup::<a class='enum' href='../namedlock/enum.Cleanup.html' title='namedlock::Cleanup'>KeepUnused</a>;</code></td></tr><tr><td><code>pub use Cleanup::<a class='enum' href='../namedlock/enum.Cleanup.html' title='namedlock::Cleanup'>AutoCleanup</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='arcmutexguard/index.html'
+                               title='namedlock::arcmutexguard'>arcmutexguard</a></td>
+                        <td class='docblock short'><p>Mutex guards that can outlive the Mutex.</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='lockresult/index.html'
+                               title='namedlock::lockresult'>lockresult</a></td>
+                        <td class='docblock short'><p>A <code>Result</code> type very similar to <code>std::sync::LockResult</code>.</p>
+</td>
+                    </tr>
+                </table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='macro' href='macro.ahk_chain_borrow!.html'
+                               title='namedlock::ahk_chain_borrow!'>ahk_chain_borrow!</a></td>
+                        <td class='docblock short'><p>See the <code>LockSpace</code> documentation on &quot;Key parameters&quot; for more information
+on this macro.</p>
+</td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.LockSpace.html'
@@ -134,8 +159,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</p>
                         <td class='docblock short'><p>A <code>LockSpace&lt;K,V&gt;</code> holds many <code>Mutex&lt;V&gt;</code>&#39;s, keyed by <code>K</code>.</p>
 </td>
                     </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.LockSpaceGuard.html'
+                               title='namedlock::LockSpaceGuard'>LockSpaceGuard</a></td>
+                        <td class='docblock short'><p>An RAII implementation of a &quot;scoped lock&quot; of a a LockSpace value. When this
+structure is dropped (falls out of scope), the lock will be unlocked, and
+the reference count to the key will be decreased by 1.</p>
+</td>
+                    </tr>
                 </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='enum' href='enum.Cleanup.html'
+                               title='namedlock::Cleanup'>Cleanup</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
                     <tr>
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='enum' href='enum.LockSpaceRemoveResult.html'
                                title='namedlock::LockSpaceRemoveResult'>LockSpaceRemoveResult</a></td>

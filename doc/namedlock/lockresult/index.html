@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `LockSpaceRemoveResult` enum in crate `namedlock`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, LockSpaceRemoveResult">
+    <meta name="description" content="API documentation for the Rust `lockresult` mod in crate `namedlock`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, lockresult">
 
-    <title>namedlock::LockSpaceRemoveResult - Rust</title>
+    <title>namedlock::lockresult - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
     
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='index.html'>namedlock</a></p><script>window.sidebarCurrent = {name: 'LockSpaceRemoveResult', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>namedlock</a></p><script>window.sidebarCurrent = {name: 'lockresult', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -40,18 +40,27 @@
         </form>
     </nav>
 
-    <section id='main' class="content enum">
-<h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>namedlock</a>::<wbr><a class='enum' href=''>LockSpaceRemoveResult</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>namedlock</a>::<wbr><a class='mod' href=''>lockresult</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-958' href='../src/namedlock/lib.rs.html#228-234'>[src]</a></span></h1>
-<pre class='rust enum'>pub enum LockSpaceRemoveResult {
-    Success,
-    NotFound,
-    PoisonError,
-    WouldBlock,
-}</pre><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.Success'><a class='stability Unmarked' title='No stability level'></a><code>Success</code></td><td></td></tr><tr><td id='variant.NotFound'><a class='stability Unmarked' title='No stability level'></a><code>NotFound</code></td><td></td></tr><tr><td id='variant.PoisonError'><a class='stability Unmarked' title='No stability level'></a><code>PoisonError</code></td><td></td></tr><tr><td id='variant.WouldBlock'><a class='stability Unmarked' title='No stability level'></a><code>WouldBlock</code></td><td><div class='docblock'><p><code>remove()</code> would block.</p>
-</div></td></tr></table></section>
+        </span><a id='src-21' href='../../src/namedlock/lockresult.rs.html#18-37'>[src]</a></span></h1>
+<div class='docblock'><p>A <code>Result</code> type very similar to <code>std::sync::LockResult</code>.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.PoisonError.html'
+                               title='namedlock::lockresult::PoisonError'>PoisonError</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='type' href='type.LockResult.html'
+                               title='namedlock::lockresult::LockResult'>LockResult</a></td>
+                        <td class='docblock short'><p>A <code>Result</code> type very similar to <code>std::sync::LockResult</code>.</p>
+</td>
+                    </tr>
+                </table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -90,13 +99,13 @@
     
 
     <script>
-        window.rootPath = "../";
+        window.rootPath = "../../";
         window.currentCrate = "namedlock";
         window.playgroundUrl = "";
     </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script async src="../../search-index.js"></script>
 </body>
 </html>

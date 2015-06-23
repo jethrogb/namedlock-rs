@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `LockSpaceRemoveResult` enum in crate `namedlock`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, LockSpaceRemoveResult">
+    <meta name="description" content="API documentation for the Rust `LockResult` type in crate `namedlock`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, LockResult">
 
-    <title>namedlock::LockSpaceRemoveResult - Rust</title>
+    <title>namedlock::lockresult::LockResult - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../main.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
     
@@ -26,7 +26,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='index.html'>namedlock</a></p><script>window.sidebarCurrent = {name: 'LockSpaceRemoveResult', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'><a href='../index.html'>namedlock</a>::<wbr><a href='index.html'>lockresult</a></p><script>window.sidebarCurrent = {name: 'LockResult', ty: 'type', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </section>
 
     <nav class="sub">
@@ -40,18 +40,15 @@
         </form>
     </nav>
 
-    <section id='main' class="content enum">
-<h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>namedlock</a>::<wbr><a class='enum' href=''>LockSpaceRemoveResult</a><wbr></span><span class='out-of-band'><span id='render-detail'>
+    <section id='main' class="content type">
+<h1 class='fqn'><span class='in-band'><a href='../index.html'>namedlock</a>::<wbr><a href='index.html'>lockresult</a>::<wbr><a class='type' href=''>LockResult</a><wbr></span><span class='out-of-band'><span id='render-detail'>
             <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-958' href='../src/namedlock/lib.rs.html#228-234'>[src]</a></span></h1>
-<pre class='rust enum'>pub enum LockSpaceRemoveResult {
-    Success,
-    NotFound,
-    PoisonError,
-    WouldBlock,
-}</pre><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.Success'><a class='stability Unmarked' title='No stability level'></a><code>Success</code></td><td></td></tr><tr><td id='variant.NotFound'><a class='stability Unmarked' title='No stability level'></a><code>NotFound</code></td><td></td></tr><tr><td id='variant.PoisonError'><a class='stability Unmarked' title='No stability level'></a><code>PoisonError</code></td><td></td></tr><tr><td id='variant.WouldBlock'><a class='stability Unmarked' title='No stability level'></a><code>WouldBlock</code></td><td><div class='docblock'><p><code>remove()</code> would block.</p>
-</div></td></tr></table></section>
+        </span><a id='src-67' href='../../src/namedlock/lockresult.rs.html#37'>[src]</a></span></h1>
+<pre class='rust typedef'>type LockResult&lt;T&gt; = <a class='enum' href='http://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;T, <a class='struct' href='../../namedlock/lockresult/struct.PoisonError.html' title='namedlock::lockresult::PoisonError'>PoisonError</a>&lt;T&gt;&gt;;</pre><div class='docblock'><p>A <code>Result</code> type very similar to <code>std::sync::LockResult</code>.</p>
+
+<p>We can&#39;t use sync&#39;s LockResult because we can&#39;t map it&#39;s PoisonError inner
+guard</p>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -90,13 +87,13 @@
     
 
     <script>
-        window.rootPath = "../";
+        window.rootPath = "../../";
         window.currentCrate = "namedlock";
         window.playgroundUrl = "";
     </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script async src="../../search-index.js"></script>
 </body>
 </html>

@@ -1,0 +1,1 @@
+initSidebarItems({"type":[["LockResult","A `Result` type very similar to `std::sync::LockResult`."]],"struct":[["PoisonError",""]]});
