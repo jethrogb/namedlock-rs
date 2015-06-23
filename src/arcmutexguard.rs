@@ -56,7 +56,6 @@
 //! Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 use std::sync::{Arc,Mutex,MutexGuard};
-use std::mem::transmute;
 use std::ops::{Deref,DerefMut};
 
 use lockresult::*;
@@ -90,7 +89,7 @@ impl<'a, T:'a> DerefMut for ArcMutexGuard<'a,T> {
 	fn deref_mut<'b>(&'b mut self) -> &'b mut T {
 		// This is always Some, because it's initialized as Some, and only drop() turns it into None
 		match self.guard {
-			Some(ref mut value) => unsafe{transmute::<&mut T,&'b mut T>(value)},
+			Some(ref mut value) => unsafe{&mut*(value.deref_mut() as *mut _) as &'b mut T},
 			None => unreachable!(), // to be replace with std::intrinsics::unreachable once stable
 		}
 	}
@@ -117,7 +116,7 @@ impl<'a, T:'a> Drop for ArcMutexGuard<'a,T> {
 // lifetime 'a since we will be storing the Arc<Mutex<_>> in a structure with the same
 // lifetime 'a.
 pub fn arc_mutex_lock<'a,T>(mutex: Arc<Mutex<T>>) -> LockResult<ArcMutexGuard<'a,T>> {
-	let lock_result=unsafe{transmute::<&Mutex<T>,&'a Mutex<T>>(mutex.deref())}.lock();
+	let lock_result=unsafe{&*(&mutex as *const _) as &'a Mutex<T>}.lock();
 	match lock_result {
 		Ok(guard) => Ok(ArcMutexGuard{mutex:mutex,guard:Some(guard)}),
 		Err(_) => Err(PoisonError::new())
