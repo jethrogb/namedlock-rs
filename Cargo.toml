@@ -1,6 +1,6 @@
 [package]
 name = "namedlock"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Jethro G. Beekman <rust@jbeekman.nl>"]
 documentation = "https://jethrogb.github.io/namedlock-rs/doc/namedlock"
 repository = "https://github.com/jethrogb/namedlock-rs"
