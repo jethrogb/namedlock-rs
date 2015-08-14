@@ -1,5 +1,5 @@
 (function() {var implementors = {};
-implementors['namedlock'] = ["impl <a class='trait' href='http://doc.rust-lang.org/nightly/core/marker/trait.Copy.html' title='core::marker::Copy'>Copy</a> for <a class='enum' href='namedlock/enum.Cleanup.html' title='namedlock::Cleanup'>Cleanup</a>",];
+implementors['namedlock'] = [];
 
             if (window.register_implementors) {
                 window.register_implementors(implementors);

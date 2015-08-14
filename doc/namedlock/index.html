@@ -41,9 +41,11 @@
     </nav>
 
     <section id='main' class="content mod">
-<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>namedlock</a><wbr></span><span class='out-of-band'><a href='stability.html'>[stability]</a> <span id='render-detail'>
-            <a id="collapse-all" href="#">[-]</a>&nbsp;<a id="expand-all" href="#">[+]</a>
-        </span><a id='src-0' href='../src/namedlock/lib.rs.html#18-435'>[src]</a></span></h1>
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>namedlock</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/namedlock/lib.rs.html#18-439' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Namespaces for named locks.</p>
 
 <p>This is useful when synchronizing access to a named resource, but you only
@@ -129,57 +131,71 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>pub use Cleanup::<a class='enum' href='../namedlock/enum.Cleanup.html' title='namedlock::Cleanup'>KeepUnused</a>;</code></td></tr><tr><td><code>pub use Cleanup::<a class='enum' href='../namedlock/enum.Cleanup.html' title='namedlock::Cleanup'>AutoCleanup</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='arcmutexguard/index.html'
-                               title='namedlock::arcmutexguard'>arcmutexguard</a></td>
-                        <td class='docblock short'><p>Mutex guards that can outlive the Mutex.</p>
-</td>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='lockresult/index.html'
+                               title='namedlock::lockresult'>lockresult</a></td>
+                        <td class='docblock short'>
+                             <p>A <code>Result</code> type very similar to <code>std::sync::LockResult</code>.</p>
+
+                        </td>
                     </tr>
                 
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='lockresult/index.html'
-                               title='namedlock::lockresult'>lockresult</a></td>
-                        <td class='docblock short'><p>A <code>Result</code> type very similar to <code>std::sync::LockResult</code>.</p>
-</td>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='ownedmutexguard/index.html'
+                               title='namedlock::ownedmutexguard'>ownedmutexguard</a></td>
+                        <td class='docblock short'>
+                             <p>Mutex guards that own the Mutex.</p>
+
+                        </td>
                     </tr>
                 </table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
 <table>
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='macro' href='macro.ahk_chain_borrow!.html'
+                    <tr class=' module-item'>
+                        <td><a class='macro' href='macro.ahk_chain_borrow!.html'
                                title='namedlock::ahk_chain_borrow!'>ahk_chain_borrow!</a></td>
-                        <td class='docblock short'><p>See the <code>LockSpace</code> documentation on &quot;Key parameters&quot; for more information
+                        <td class='docblock short'>
+                             <p>See the <code>LockSpace</code> documentation on &quot;Key parameters&quot; for more information
 on this macro.</p>
-</td>
+
+                        </td>
                     </tr>
                 </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.LockSpace.html'
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.LockSpace.html'
                                title='namedlock::LockSpace'>LockSpace</a></td>
-                        <td class='docblock short'><p>A <code>LockSpace&lt;K,V&gt;</code> holds many <code>Mutex&lt;V&gt;</code>&#39;s, keyed by <code>K</code>.</p>
-</td>
+                        <td class='docblock short'>
+                             <p>A <code>LockSpace&lt;K,V&gt;</code> holds many <code>Mutex&lt;V&gt;</code>&#39;s, keyed by <code>K</code>.</p>
+
+                        </td>
                     </tr>
                 
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.LockSpaceGuard.html'
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.LockSpaceGuard.html'
                                title='namedlock::LockSpaceGuard'>LockSpaceGuard</a></td>
-                        <td class='docblock short'><p>An RAII implementation of a &quot;scoped lock&quot; of a a LockSpace value. When this
+                        <td class='docblock short'>
+                             <p>An RAII implementation of a &quot;scoped lock&quot; of a a LockSpace value. When this
 structure is dropped (falls out of scope), the lock will be unlocked, and
 the reference count to the key will be decreased by 1.</p>
-</td>
+
+                        </td>
                     </tr>
                 </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='enum' href='enum.Cleanup.html'
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Cleanup.html'
                                title='namedlock::Cleanup'>Cleanup</a></td>
-                        <td class='docblock short'></td>
+                        <td class='docblock short'>
+                             
+                        </td>
                     </tr>
                 
-                    <tr>
-                        <td><a class='stability Unmarked' title='No stability level'></a><a class='enum' href='enum.LockSpaceRemoveResult.html'
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.LockSpaceRemoveResult.html'
                                title='namedlock::LockSpaceRemoveResult'>LockSpaceRemoveResult</a></td>
-                        <td class='docblock short'></td>
+                        <td class='docblock short'>
+                             
+                        </td>
                     </tr>
                 </table></section>
     <section id='search' class="content hidden"></section>
@@ -213,6 +229,10 @@ the reference count to the key will be decreased by 1.</p>
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>

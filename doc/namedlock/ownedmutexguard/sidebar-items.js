@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["OwnedMutexGuard","An RAII implementation of a \"scoped lock\" of a mutex. When this structure is dropped (falls out of scope), the lock will be unlocked, and the owner of the Mutex will be dropped."]],"trait":[["OwnedMutex","Implements the functions to obtain `OwnedMutexGuard`s."]]});

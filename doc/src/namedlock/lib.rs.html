@@ -475,6 +475,10 @@
 <span id="433">433</span>
 <span id="434">434</span>
 <span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
 </pre><pre class='rust '>
 <span class='comment'>// namedlock - Namespaces for named locks</span>
 <span class='comment'>// Copyright (C) 2015  Jethro G. Beekman</span>
@@ -593,8 +597,8 @@
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>lockresult</span>;
 <span class='kw'>use</span> <span class='ident'>lockresult</span>::<span class='op'>*</span>;
 
-<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>arcmutexguard</span>;
-<span class='kw'>use</span> <span class='ident'>arcmutexguard</span>::{<span class='ident'>ArcMutexGuard</span>,<span class='ident'>arc_mutex_lock</span>};
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>ownedmutexguard</span>;
+<span class='kw'>use</span> <span class='ident'>ownedmutexguard</span>::{<span class='ident'>OwnedMutex</span>,<span class='ident'>OwnedMutexGuard</span>};
 
 <span class='kw'>mod</span> <span class='ident'>archashkey</span>;
 <span class='kw'>use</span> <span class='ident'>archashkey</span>::<span class='ident'>ArcHashKey</span>;
@@ -607,11 +611,11 @@
 <span class='doccomment'>/// DerefMut implementations.</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='lifetime'>&#39;a</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
     <span class='ident'>owner</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>LockSpace</span><span class='op'>&lt;</span><span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span>,
-    <span class='ident'>entry</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>LockSpaceEntry</span><span class='op'>&lt;</span><span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;&gt;</span>,
-    <span class='ident'>guard</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>ArcMutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>V</span><span class='op'>&gt;&gt;</span>,
+    <span class='ident'>key</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>ArcHashKey</span><span class='op'>&lt;</span><span class='ident'>K</span><span class='op'>&gt;&gt;</span>,
+    <span class='ident'>guard</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>OwnedMutexGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>V</span>,<span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;&gt;</span>,
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='lifetime'>&#39;a</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Deref</span> <span class='kw'>for</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Deref</span> <span class='kw'>for</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span> {
 	<span class='kw'>type</span> <span class='ident'>Target</span> <span class='op'>=</span> <span class='ident'>V</span>;
 	<span class='kw'>fn</span> <span class='ident'>deref</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='ident'>V</span> {
 		<span class='comment'>// This is always Some, because it&#39;s initialized as Some, and only drop() turns it into None</span>
@@ -622,7 +626,7 @@
 	}
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='lifetime'>&#39;a</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>DerefMut</span> <span class='kw'>for</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>DerefMut</span> <span class='kw'>for</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span> {
 	<span class='kw'>fn</span> <span class='ident'>deref_mut</span><span class='op'>&lt;</span><span class='lifetime'>&#39;b</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;b</span> <span class='kw-2'>mut</span> <span class='ident'>V</span> {
 		<span class='comment'>// This is always Some, because it&#39;s initialized as Some, and only drop() turns it into None</span>
 		<span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>guard</span> {
@@ -632,17 +636,20 @@
 	}
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='lifetime'>&#39;a</span> <span class='op'>+</span> <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>: <span class='ident'>Eq</span> <span class='op'>+</span> <span class='ident'>Hash</span> <span class='op'>+</span> <span class='ident'>Clone</span>,<span class='ident'>V</span>:<span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='ident'>LockSpaceGuard</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span>,<span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span> {
     <span class='kw'>fn</span> <span class='ident'>drop</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) {
-		<span class='self'>self</span>.<span class='ident'>guard</span><span class='op'>=</span><span class='prelude-val'>None</span>; <span class='comment'>// Release inner lock</span>
+		<span class='comment'>// The take().unwrap()s here are safe, since they&#39;re initialized as Some</span>
+		<span class='kw'>let</span> <span class='ident'>entry</span><span class='op'>=</span>(<span class='self'>self</span>.<span class='ident'>key</span>.<span class='ident'>take</span>().<span class='ident'>unwrap</span>(),<span class='self'>self</span>.<span class='ident'>guard</span>.<span class='ident'>take</span>().<span class='ident'>unwrap</span>().<span class='ident'>into_inner</span>());
 		<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>map</span><span class='op'>=</span><span class='self'>self</span>.<span class='ident'>owner</span>.<span class='ident'>names</span>.<span class='ident'>lock</span>().<span class='ident'>unwrap</span>(); <span class='comment'>// Acquire outer lock</span>
 		{
-			<span class='kw'>let</span> <span class='ident'>entry</span><span class='op'>=</span><span class='self'>self</span>.<span class='ident'>entry</span>.<span class='ident'>take</span>().<span class='ident'>unwrap</span>();
 			<span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>owner</span>.<span class='ident'>cleanup</span><span class='op'>==</span><span class='ident'>AutoCleanup</span> {
 				<span class='comment'>// Move our reference to inner before releasing the outer lock</span>
 				<span class='ident'>LockSpace</span>::<span class='op'>&lt;</span><span class='ident'>K</span>,<span class='ident'>V</span><span class='op'>&gt;</span>::<span class='ident'>try_remove_internal</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span><span class='op'>*</span><span class='ident'>map</span>,<span class='ident'>entry</span>);
 			}
-			<span class='comment'>// else: drop our reference to inner before releasing the outer lock</span>
+			<span class='kw'>else</span> {
+				<span class='comment'>// drop our reference to inner before releasing the outer lock</span>
+				<span class='ident'>drop</span>::<span class='op'>&lt;</span><span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>V</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span>(<span class='ident'>entry</span>.<span class='number'>1</span>);
+			}
 		}
 		<span class='comment'>// Release outer lock</span>
     }
@@ -757,11 +764,12 @@
 			<span class='ident'>map</span>.<span class='ident'>insert</span>(<span class='ident'>key</span>.<span class='ident'>clone</span>(),(<span class='ident'>key</span>,<span class='ident'>mutex</span>));
 		}
 
-		<span class='kw'>let</span> <span class='ident'>target</span><span class='op'>=</span><span class='ident'>map</span>.<span class='ident'>get</span>(<span class='ident'>key</span>.<span class='ident'>borrow</span>()).<span class='ident'>unwrap</span>().<span class='ident'>clone</span>();
-		<span class='kw'>let</span> <span class='ident'>result</span><span class='op'>=</span><span class='ident'>arc_mutex_lock</span>(<span class='ident'>target</span>.<span class='number'>1</span>.<span class='ident'>clone</span>(<span class='comment'>/*Invariants OK*/</span>)); <span class='comment'>// Acquire inner lock, moving our reference</span>
+		<span class='kw'>let</span> <span class='ident'>target</span><span class='op'>=</span><span class='ident'>map</span>.<span class='ident'>get</span>(<span class='ident'>key</span>.<span class='ident'>borrow</span>()).<span class='ident'>unwrap</span>().<span class='ident'>clone</span>(<span class='comment'>/*Invariants OK*/</span>);
+		<span class='kw'>let</span> <span class='ident'>key</span><span class='op'>=</span><span class='ident'>target</span>.<span class='number'>0</span>;
+		<span class='kw'>let</span> <span class='ident'>guard</span><span class='op'>=</span><span class='ident'>target</span>.<span class='number'>1</span>.<span class='ident'>owned_lock</span>(); <span class='comment'>// Acquire inner lock, moving our reference</span>
 		<span class='ident'>drop</span>::<span class='op'>&lt;</span><span class='ident'>MutexGuard</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>(<span class='ident'>map</span>); <span class='comment'>// Explicitly release outer lock</span>
 
-		<span class='ident'>result</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>guard</span><span class='op'>|</span><span class='ident'>LockSpaceGuard</span>{<span class='ident'>owner</span>:<span class='self'>self</span>,<span class='ident'>entry</span>:<span class='prelude-val'>Some</span>(<span class='ident'>target</span>),<span class='ident'>guard</span>:<span class='prelude-val'>Some</span>(<span class='ident'>guard</span>)}).<span class='ident'>map_err</span>(<span class='op'>|</span>_<span class='op'>|</span><span class='ident'>PoisonError</span>::<span class='ident'>new</span>())
+		<span class='ident'>guard</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>guard</span><span class='op'>|</span><span class='ident'>LockSpaceGuard</span>{<span class='ident'>owner</span>:<span class='self'>self</span>,<span class='ident'>key</span>:<span class='prelude-val'>Some</span>(<span class='ident'>key</span>),<span class='ident'>guard</span>:<span class='prelude-val'>Some</span>(<span class='ident'>guard</span>)}).<span class='ident'>map_err</span>(<span class='op'>|</span>_<span class='op'>|</span><span class='ident'>PoisonError</span>::<span class='ident'>new</span>())
 	}
 
 	<span class='doccomment'>/// Find the object by `key`, or create it by calling `initial` if it does</span>
@@ -944,6 +952,10 @@
                 <code>struct</code>, <code>enum</code>,
                 <code>trait</code>, <code>typedef</code> (or
                 <code>tdef</code>).
+            </p>
+            <p>
+                Search functions by type signature (e.g.
+                <code>vec -> usize</code>)
             </p>
         </div>
     </div>

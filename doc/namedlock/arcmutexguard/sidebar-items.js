@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["arc_mutex_lock","Acquires an `Arc<Mutex<_>>`, blocking the current thread until it is able to do so."]],"struct":[["ArcMutexGuard","An RAII implementation of a \"scoped lock\" of a mutex. When this structure is dropped (falls out of scope), the lock will be unlocked, and the reference count to the Mutex will be decreased by 1."]]});
