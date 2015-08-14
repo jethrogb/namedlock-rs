@@ -115,8 +115,8 @@ use std::mem::{transmute,drop};
 pub mod lockresult;
 use lockresult::*;
 
-pub mod arcmutexguard;
-use arcmutexguard::{ArcMutexGuard,arc_mutex_lock};
+pub mod ownedmutexguard;
+use ownedmutexguard::{OwnedMutex,OwnedMutexGuard};
 
 mod archashkey;
 use archashkey::ArcHashKey;
@@ -129,11 +129,11 @@ use archashkey::ArcHashKey;
 /// DerefMut implementations.
 pub struct LockSpaceGuard<'a,K: 'a + Eq + Hash + Clone,V:'a> {
     owner: &'a LockSpace<K,V>,
-    entry: Option<LockSpaceEntry<K,V>>,
-    guard: Option<ArcMutexGuard<'a,V>>,
+    key: Option<ArcHashKey<K>>,
+    guard: Option<OwnedMutexGuard<'a,V,Arc<Mutex<V>>>>,
 }
 
-impl<'a,K: 'a + Eq + Hash + Clone,V:'a> Deref for LockSpaceGuard<'a,K,V> {
+impl<'a,K: Eq + Hash + Clone,V:'a> Deref for LockSpaceGuard<'a,K,V> {
 	type Target = V;
 	fn deref<'b>(&'b self) -> &'b V {
 		// This is always Some, because it's initialized as Some, and only drop() turns it into None
@@ -144,7 +144,7 @@ impl<'a,K: 'a + Eq + Hash + Clone,V:'a> Deref for LockSpaceGuard<'a,K,V> {
 	}
 }
 
-impl<'a,K: 'a + Eq + Hash + Clone,V:'a> DerefMut for LockSpaceGuard<'a,K,V> {
+impl<'a,K: Eq + Hash + Clone,V:'a> DerefMut for LockSpaceGuard<'a,K,V> {
 	fn deref_mut<'b>(&'b mut self) -> &'b mut V {
 		// This is always Some, because it's initialized as Some, and only drop() turns it into None
 		match self.guard {
@@ -154,17 +154,20 @@ impl<'a,K: 'a + Eq + Hash + Clone,V:'a> DerefMut for LockSpaceGuard<'a,K,V> {
 	}
 }
 
-impl<'a,K: 'a + Eq + Hash + Clone,V:'a> Drop for LockSpaceGuard<'a,K,V> {
+impl<'a,K: Eq + Hash + Clone,V:'a> Drop for LockSpaceGuard<'a,K,V> {
     fn drop(&mut self) {
-		self.guard=None; // Release inner lock
+		// The take().unwrap()s here are safe, since they're initialized as Some
+		let entry=(self.key.take().unwrap(),self.guard.take().unwrap().into_inner());
 		let mut map=self.owner.names.lock().unwrap(); // Acquire outer lock
 		{
-			let entry=self.entry.take().unwrap();
 			if self.owner.cleanup==AutoCleanup {
 				// Move our reference to inner before releasing the outer lock
 				LockSpace::<K,V>::try_remove_internal(&mut*map,entry);
 			}
-			// else: drop our reference to inner before releasing the outer lock
+			else {
+				// drop our reference to inner before releasing the outer lock
+				drop::<Arc<Mutex<V>>>(entry.1);
+			}
 		}
 		// Release outer lock
     }
@@ -279,11 +282,12 @@ impl<K: Eq + Hash + Clone,V> LockSpace<K,V> {
 			map.insert(key.clone(),(key,mutex));
 		}
 
-		let target=map.get(key.borrow()).unwrap().clone();
-		let result=arc_mutex_lock(target.1.clone(/*Invariants OK*/)); // Acquire inner lock, moving our reference
+		let target=map.get(key.borrow()).unwrap().clone(/*Invariants OK*/);
+		let key=target.0;
+		let guard=target.1.owned_lock(); // Acquire inner lock, moving our reference
 		drop::<MutexGuard<_>>(map); // Explicitly release outer lock
 
-		result.map(|guard|LockSpaceGuard{owner:self,entry:Some(target),guard:Some(guard)}).map_err(|_|PoisonError::new())
+		guard.map(|guard|LockSpaceGuard{owner:self,key:Some(key),guard:Some(guard)}).map_err(|_|PoisonError::new())
 	}
 
 	/// Find the object by `key`, or create it by calling `initial` if it does
