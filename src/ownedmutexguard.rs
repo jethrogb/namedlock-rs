@@ -60,7 +60,7 @@ use std::sync::{Mutex,MutexGuard};
 use std::ops::{Deref,DerefMut};
 use std;
 
-use lockresult::*;
+use lockresult::LockResult as Result;
 
 /// An RAII implementation of a "scoped lock" of a mutex. When this structure
 /// is dropped (falls out of scope), the lock will be unlocked, and the
@@ -130,12 +130,9 @@ pub unsafe trait OwnedMutex<T>: Sized + Deref<Target=Mutex<T>> {
 	// In particular, we know that our reference to the mutex can be safely converted to
 	// lifetime 'a since we will be storing the OwnedMutex in a structure with the same
 	// lifetime 'a.
-	fn owned_lock<'a>(self) -> LockResult<OwnedMutexGuard<'a,T,Self>> where Self: 'a {
-		let lock_result=unsafe{&*(&self as *const _) as &'a Mutex<T>}.lock();
-		match lock_result {
-			Ok(guard) => Ok(OwnedMutexGuard{owned_mutex:Some(self),guard:Some(guard)}),
-			Err(_) => Err(PoisonError::new())
-		}
+	fn owned_lock<'a>(self) -> Result<OwnedMutexGuard<'a,T,Self>> where Self: 'a {
+		let guard=try!(unsafe{&*(&self as *const _) as &'a Mutex<T>}.lock());
+		return Ok(OwnedMutexGuard{owned_mutex:Some(self),guard:Some(guard)});
 	}
 }
 

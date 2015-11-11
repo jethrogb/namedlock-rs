@@ -16,16 +16,12 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 //! A `Result` type very similar to `std::sync::LockResult`.
+use std::sync;
 use std::fmt;
-use std::marker::PhantomData;
-// Use PhantomData to mimic type signature
-pub struct PoisonError<T>(PhantomData<T>);
-impl<T> PoisonError<T> {
-	pub fn new() -> PoisonError<T> {
-		PoisonError(PhantomData)
-	}
-}
-impl<T> fmt::Debug for PoisonError<T> {
+
+pub struct PoisonError;
+
+impl fmt::Debug for PoisonError {
 	fn fmt(&self, fmt: &mut fmt::Formatter) -> Result<(), fmt::Error> {
 		fmt.write_str("PoisonError")
 	}
@@ -34,4 +30,10 @@ impl<T> fmt::Debug for PoisonError<T> {
 ///
 /// We can't use sync's LockResult because we can't map it's PoisonError inner
 /// guard
-pub type LockResult<T> = Result<T,PoisonError<T>>;
+pub type LockResult<T> = Result<T,PoisonError>;
+
+impl<T> From<sync::PoisonError<T>> for PoisonError {
+    fn from(_: sync::PoisonError<T>) -> PoisonError {
+        PoisonError
+    }
+}
