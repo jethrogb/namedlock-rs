@@ -16,8 +16,7 @@
 // Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 //! A `Result` type very similar to `std::sync::LockResult`.
-use std::sync;
-use std::fmt;
+use core::fmt;
 
 pub struct PoisonError;
 
@@ -31,9 +30,3 @@ impl fmt::Debug for PoisonError {
 /// We can't use sync's LockResult because we can't map it's PoisonError inner
 /// guard
 pub type LockResult<T> = Result<T,PoisonError>;
-
-impl<T> From<sync::PoisonError<T>> for PoisonError {
-    fn from(_: sync::PoisonError<T>) -> PoisonError {
-        PoisonError
-    }
-}

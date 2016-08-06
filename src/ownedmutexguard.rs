@@ -56,11 +56,18 @@
 //! along with this program; if not, write to the Free Software Foundation,
 //! Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-use std::sync::{Mutex,MutexGuard};
-use std::ops::{Deref,DerefMut};
-use std;
+#[cfg(all(feature="std",not(feature="spin")))] use std::sync::{Mutex,MutexGuard};
+#[cfg(feature="spin")] use spin::{Mutex,MutexGuard};
+use core::ops::{Deref,DerefMut};
+
+#[cfg(feature="std")] use std::rc::Rc;
+#[cfg(feature="std")] use std::sync::Arc;
+#[cfg(not(feature="std"))] use alloc::boxed::Box;
+#[cfg(not(feature="std"))] use alloc::rc::Rc;
+#[cfg(not(feature="std"))] use alloc::arc::Arc;
 
 use lockresult::LockResult as Result;
+use private::IntoResult;
 
 /// An RAII implementation of a "scoped lock" of a mutex. When this structure
 /// is dropped (falls out of scope), the lock will be unlocked, and the
@@ -131,11 +138,11 @@ pub unsafe trait OwnedMutex<T>: Sized + Deref<Target=Mutex<T>> {
 	// lifetime 'a since we will be storing the OwnedMutex in a structure with the same
 	// lifetime 'a.
 	fn owned_lock<'a>(self) -> Result<OwnedMutexGuard<'a,T,Self>> where Self: 'a {
-		let guard=try!(unsafe{&*(&self as *const _) as &'a Mutex<T>}.lock());
+		let guard=try!(unsafe{&*(&self as *const _) as &'a Mutex<T>}.lock().into_result());
 		return Ok(OwnedMutexGuard{owned_mutex:Some(self),guard:Some(guard)});
 	}
 }
 
 unsafe impl<T> OwnedMutex<T> for Box<Mutex<T>> {}
-unsafe impl<T> OwnedMutex<T> for std::rc::Rc<Mutex<T>> {}
-unsafe impl<T> OwnedMutex<T> for std::sync::Arc<Mutex<T>> {}
+unsafe impl<T> OwnedMutex<T> for Rc<Mutex<T>> {}
+unsafe impl<T> OwnedMutex<T> for Arc<Mutex<T>> {}
