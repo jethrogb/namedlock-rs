@@ -104,6 +104,9 @@
 
 #[cfg(all(test,not(feature="std")))] #[macro_use] extern crate std;
 
+#[cfg(all(feature="spin",feature="parking_lot"))]
+compile_error!("`spin` and `parking_lot` features can't be used together");
+
 #[cfg(feature="spin")] extern crate spin;
 #[cfg(feature="parking_lot")] extern crate parking_lot;
 #[cfg(feature="std")] extern crate core;
