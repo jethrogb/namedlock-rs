@@ -104,7 +104,11 @@
 
 #[cfg(all(test,not(feature="std")))] #[macro_use] extern crate std;
 
+#[cfg(all(feature="spin",feature="parking_lot"))]
+compile_error!("`spin` and `parking_lot` features can't be used together");
+
 #[cfg(feature="spin")] extern crate spin;
+#[cfg(feature="parking_lot")] extern crate parking_lot;
 #[cfg(feature="std")] extern crate core;
 #[cfg(not(feature="std"))] extern crate alloc;
 #[cfg(not(feature="std"))] extern crate core_collections;
@@ -113,8 +117,9 @@
 #[cfg(not(feature="std"))] use core_collections::{hash_map,HashMap};
 #[cfg(feature="std")] use std::sync::Arc;
 #[cfg(not(feature="std"))] use alloc::arc::Arc;
-#[cfg(all(feature="std",not(feature="spin")))] use std::sync::{Mutex,MutexGuard};
+#[cfg(all(feature="std",not(feature="spin"),not(feature="parking_lot")))] use std::sync::{Mutex,MutexGuard};
 #[cfg(feature="spin")] use spin::{Mutex,MutexGuard};
+#[cfg(feature="parking_lot")] use parking_lot::{Mutex,MutexGuard};
 use core::hash::Hash;
 use core::ops::{Deref,DerefMut};
 use core::mem::drop;
@@ -133,7 +138,7 @@ mod private {
 		fn into_result(self) -> LockResult<T>;
 	}
 
-	#[cfg(all(feature="std",not(feature="spin")))]
+	#[cfg(all(feature="std",not(feature="spin"),not(feature="parking_lot")))]
 	impl<T> IntoResult<T> for Result<T,::std::sync::PoisonError<T>> {
 		fn into_result(self) -> LockResult<T> {
 			match self {
@@ -146,6 +151,13 @@ mod private {
 	#[cfg(feature="spin")]
 	impl<'a,T> IntoResult<::spin::MutexGuard<'a,T>> for ::spin::MutexGuard<'a,T> {
 		fn into_result(self) -> LockResult<::spin::MutexGuard<'a,T>> {
+			Ok(self)
+		}
+	}
+
+	#[cfg(feature="parking_lot")]
+	impl<'a,T> IntoResult<::parking_lot::MutexGuard<'a,T>> for ::parking_lot::MutexGuard<'a,T> {
+		fn into_result(self) -> LockResult<::parking_lot::MutexGuard<'a,T>> {
 			Ok(self)
 		}
 	}

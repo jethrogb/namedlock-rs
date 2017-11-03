@@ -56,8 +56,9 @@
 //! along with this program; if not, write to the Free Software Foundation,
 //! Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-#[cfg(all(feature="std",not(feature="spin")))] use std::sync::{Mutex,MutexGuard};
+#[cfg(all(feature="std",not(feature="spin"),not(feature="parking_lot")))] use std::sync::{Mutex,MutexGuard};
 #[cfg(feature="spin")] use spin::{Mutex,MutexGuard};
+#[cfg(feature="parking_lot")] use parking_lot::{Mutex,MutexGuard};
 use core::ops::{Deref,DerefMut};
 
 #[cfg(feature="std")] use std::rc::Rc;
