@@ -1,6 +1,6 @@
 [package]
 name = "namedlock"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Jethro G. Beekman <rust@jbeekman.nl>"]
 documentation = "https://jethrogb.github.io/namedlock-rs/doc/namedlock"
 repository = "https://github.com/jethrogb/namedlock-rs"
@@ -12,7 +12,7 @@ keywords = ["mutex", "lock"]
 [dependencies]
 spin = { version = "0.4.0", optional = true }
 core_collections = { version = "0.3", optional = true, features = ["rand"] }
-parking_lot = { version = "0.4.8", optional = true }
+parking_lot = { version = "0.5", optional = true }
 
 [features]
 default = ["std"]
